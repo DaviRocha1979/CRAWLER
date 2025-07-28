@@ -1,0 +1,26 @@
+name: Crawling RETS sites
+
+on:
+  schedule:
+    - cron: '0 3 * * MON'  # toda segunda-feira às 03:00 UTC
+  workflow_dispatch:
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Executar crawler
+        run: python scan_rets.py
+
+      - name: Salvar resultado
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add matches_rets.csv
+          git commit -m "Atualização semanal de notícias"
+          git push
